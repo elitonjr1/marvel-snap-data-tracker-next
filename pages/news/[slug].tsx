@@ -26,7 +26,7 @@ export default function NewPage( { news } : NewProps) {
            
 }
 
-export const getStaticProps: GetStaticProps<NewProps, NewPageQuery> = async ({ params }) => 
+export const getStaticProps: GetStaticProps = async ({ params }) => 
 {    
     const result = await apolloClient.query({
         query: gql`

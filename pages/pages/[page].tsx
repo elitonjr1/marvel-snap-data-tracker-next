@@ -83,7 +83,7 @@ export const getStaticProps: GetStaticProps<NewPageProps, NewPageQuery> = async 
       }
 }
 
-export const getStaticPaths: GetStaticPaths<NewPageQuery> = async () => {
+export const getStaticPaths: GetStaticPaths = async () => {
     const result = await apolloClient.query({
         query: gql`
         query{

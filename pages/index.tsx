@@ -29,7 +29,7 @@ export default function Home({ news, pagination } : ItemsProps) {
 }
 
 
-export const getStaticProps : GetStaticProps<NewsProps> = async () => {
+export const getStaticProps : GetStaticProps = async () => {
    
    const result = await apolloClient.query({
     query: gql`
