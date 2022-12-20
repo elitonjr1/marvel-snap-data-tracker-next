@@ -5,53 +5,32 @@ import { userSchema, UserSchema } from "../../auth/schemas/userSchema";
 import { z } from 'zod';
 import useAxios from "axios-hooks";
 
-const signupSchema = userSchema.extend({
-    confirmPassword: z.string().min(0),
-}).refine(({ password, confirmPassword }) => password === confirmPassword, { message: 'As senhas são diferentes.', path: ['confirmPassword'] } )
+const SigninForm = () => {
 
-const SignupForm = () => {
-
-    const [{}, execute] = useAxios<UserSchema, UserSchema>({
-        url: '/api/signup',
-        method: 'POST'
-    }, {
-        manual: true
-    });
-
-    const { ref, fields, errors, validation } = useZorm("signup", signupSchema, {
+    const { ref, fields, errors, validation } = useZorm("signin", userSchema, {
         onValidSubmit(event) {
-            event.preventDefault();            
-            execute({
-                data: event.data,
-            });
-
+            event.preventDefault(); 
         }
     });
 
     const disabled = validation?.success === false;
 
     return <Container>
-                <Title>Cadastre-se</Title>
+                <Title>Entrar</Title>
                 <SignupFormContent noValidate ref={ref}>
-                    <Input className={`input ${errors.name("error")}`} type="text"  id="name" placeholder="Nome" name={fields.name()}></Input>
-                    {errors.name((error) => (<ErrorMessage message={error.message}/>))}
-
                     <Input className={`input ${errors.email("error")}`} type="email"  id="email" placeholder="E-mail" name={fields.email()}></Input>                    
                     {errors.email((error) => (<ErrorMessage message={error.message}/>))}
 
                     <Input className={`input ${errors.password("error")}`} type="password" id="password" placeholder="Senha" name={fields.password()}></Input>
-                    {errors.password((error) => (<ErrorMessage message={error.message}/>))}
+                    {errors.password((error) => (<ErrorMessage message={error.message}/>))}                    
 
-                    <Input className={`input ${errors.password("error")}`} type="password" name={fields.confirmPassword()} id="password" placeholder="Confirmar Senha"></Input>
-                    {errors.confirmPassword((error) => (<ErrorMessage message={error.message}/>))}
-
-                    <Button disabled={disabled} type="submit">Criar Conta</Button>
+                    <Button disabled={disabled} type="submit">Entrar</Button>
                 </SignupFormContent>
                 
            </Container>
 }
 
-export default SignupForm;
+export default SigninForm;
 
 const Title = styled.h1`
 
