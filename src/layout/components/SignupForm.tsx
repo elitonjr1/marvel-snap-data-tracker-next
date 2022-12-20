@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import styled from 'styled-components';
 import { useZorm } from "react-zorm";
-import { userSchema, UserSchema } from "../../users/schemas/userSchema";
+import { baseUserSchema, BaseUserSchema } from "../../users/schemas/baseUserSchema";
 import { z, ZodIssue } from 'zod';
 import useAxios from "axios-hooks";
 import { MdHourglassBottom, MdHourglassTop } from "react-icons/md";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from "next/router";
+import { signIn } from 'next-auth/react';
+import { passwordSchema } from "../../users/schemas/base/passwordSchema";
 
 const texts = {
     title: "Criar conta",
@@ -29,15 +31,14 @@ function LoadingIndicator() {
     return top ? <MdHourglassTop size="16px" color= "#2139e0" /> : <MdHourglassBottom size="16px" color= "#2139e0" />
 }
 
-const signupSchema = userSchema.extend({
+const signupSchema = baseUserSchema.extend({
+    password: passwordSchema,
     confirmPassword: z.string().min(0),
 }).refine(({ password, confirmPassword }) => password === confirmPassword, { message: texts.passwordMatchError, path: ['confirmPassword'] } )
 
-const SignupForm = () => {
+const SignupForm = () => {    
 
-    const router = useRouter();
-
-    const [{ data, loading }, execute] = useAxios<{user: {id: number}; errors: ZodIssue[] }, UserSchema>({
+    const [{ data, loading }, execute] = useAxios<{user: {id: number}; errors: ZodIssue[] }, BaseUserSchema>({
         url: '/api/signup',
         method: 'POST'
     }, {
@@ -54,7 +55,10 @@ const SignupForm = () => {
 
             if(data.user){
                 toast(texts.submitSuccess);
-                router.push("/");
+                signIn('credentials', {
+                    username: event.data.email,
+                    password: event.data.password,
+                })
             } else {
                 toast(texts.submitFailure);
             }

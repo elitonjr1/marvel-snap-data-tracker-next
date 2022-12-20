@@ -1,6 +1,6 @@
 import React from "react";
-import Layout from "../src/layout/Layout";
-import NewsDetailsView from "../src/layout/components/NewsDetailsView";
+import Layout from "../layout/Layout";
+import NewsDetailsView from "../layout/components/NewsDetailsView";
 import styled from 'styled-components';
 
 const date = new Date();

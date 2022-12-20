@@ -1,15 +1,16 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import MainParagraph from '../src/layout/components/MainParagraph'
-import News, { NewsItemProps, PaginationProps } from '../src/layout/components/News'
-import { NewsProps } from '../src/layout/components/News'
-import Layout from '../src/layout/Layout'
+import MainParagraph from '../layout/components/MainParagraph'
+import News, { NewsItemProps, PaginationProps } from '../layout/components/News'
+import { NewsProps } from '../layout/components/News'
+import Layout from '../layout/Layout'
 import styles from '../styles/Home.module.css'
-import { HeaderProps } from '../src/layout/components/MainParagraph'
+import { HeaderProps } from '../layout/components/MainParagraph'
 import type { GetStaticProps } from 'next'
 import axios from 'axios'
 import {v4} from 'uuid';
-import { apolloClient, gql } from '../src/apolloClient'
+import { apolloClient, gql } from '../apolloClient'
+import { useSession } from 'next-auth/react';
 
 export type ItemsProps = {
   news: NewsProps['items'];
@@ -17,6 +18,7 @@ export type ItemsProps = {
 }
 
 export default function Home({ news, pagination } : ItemsProps) {  
+  const { data, status } = useSession();
   return <div>
               <header>
                 <MainParagraph title='' description=''></MainParagraph>

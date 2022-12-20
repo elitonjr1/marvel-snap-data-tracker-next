@@ -1,6 +1,6 @@
 import React from "react";
-import Layout from "../src/layout/Layout";
-import SigninForm from "../src/auth/components/SigninForm";
+import Layout from "../layout/Layout";
+import SigninForm from "../auth/components/SigninForm";
 import styled from "styled-components";
 
 const Signin = () => {

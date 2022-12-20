@@ -1,8 +1,8 @@
 import type { GetStaticPaths, GetStaticProps } from "next";
-import News from "../../src/layout/components/News";
-import { NewsProps } from "../../src/layout/components/News";
-import { apolloClient, gql } from "../../src/apolloClient";
-import NewsDetailsView from "../../src/layout/components/NewsDetailsView";
+import News from "../../layout/components/News";
+import { NewsProps } from "../../layout/components/News";
+import { apolloClient, gql } from "../../apolloClient";
+import NewsDetailsView from "../../layout/components/NewsDetailsView";
 import styled from "styled-components";
 
 export type NewPageProps = {

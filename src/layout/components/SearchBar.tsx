@@ -22,11 +22,14 @@ const SearchBar = () => {
 
 
     useEffect(() => {
-        searchNews({
-            variables: {
-                searchInput
-            }
-        })
+        if(searchInput.length > 0 ) {
+            searchNews({
+                variables: {
+                    searchInput
+                }
+            });
+        }
+
     }, [searchInput]);
 
     return <MainSearchBar>

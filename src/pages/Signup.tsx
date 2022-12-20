@@ -1,6 +1,6 @@
 import React from "react";
-import Layout from "../src/layout/Layout";
-import SignupForm from "../src/layout/components/SignupForm";
+import Layout from "../layout/Layout";
+import SignupForm from "../layout/components/SignupForm";
 import styled from "styled-components";
 
 const Signup = () => {
