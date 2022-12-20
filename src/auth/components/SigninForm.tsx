@@ -1,7 +1,7 @@
 import React from "react";
 import styled from 'styled-components';
 import { useZorm } from "react-zorm";
-import { userSchema, UserSchema } from "../../auth/schemas/userSchema";
+import { userSchema, UserSchema } from "../../users/schemas/userSchema";
 import { z } from 'zod';
 import useAxios from "axios-hooks";
 

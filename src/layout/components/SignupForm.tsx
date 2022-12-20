@@ -1,17 +1,43 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from 'styled-components';
 import { useZorm } from "react-zorm";
-import { userSchema, UserSchema } from "../../auth/schemas/userSchema";
-import { z } from 'zod';
+import { userSchema, UserSchema } from "../../users/schemas/userSchema";
+import { z, ZodIssue } from 'zod';
 import useAxios from "axios-hooks";
+import { MdHourglassBottom, MdHourglassTop } from "react-icons/md";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from "next/router";
+
+const texts = {
+    title: "Criar conta",
+    submit: "Enviar",
+    passwordMatchError: "As senhas são diferentes",
+    submitSuccess: "Conta criada com sucesso",
+    submitFailure: "Houve um erro ao criar sua conta",
+  };
+
+
+function LoadingIndicator() {
+    const [top, setTop] = useState(true);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => setTop(!top), 500);
+        return () => clearTimeout(timeoutId);
+    }, [top])
+
+    return top ? <MdHourglassTop size="16px" color= "#2139e0" /> : <MdHourglassBottom size="16px" color= "#2139e0" />
+}
 
 const signupSchema = userSchema.extend({
     confirmPassword: z.string().min(0),
-}).refine(({ password, confirmPassword }) => password === confirmPassword, { message: 'As senhas são diferentes.', path: ['confirmPassword'] } )
+}).refine(({ password, confirmPassword }) => password === confirmPassword, { message: texts.passwordMatchError, path: ['confirmPassword'] } )
 
 const SignupForm = () => {
 
-    const [{}, execute] = useAxios<UserSchema, UserSchema>({
+    const router = useRouter();
+
+    const [{ data, loading }, execute] = useAxios<{user: {id: number}; errors: ZodIssue[] }, UserSchema>({
         url: '/api/signup',
         method: 'POST'
     }, {
@@ -19,33 +45,41 @@ const SignupForm = () => {
     });
 
     const { ref, fields, errors, validation } = useZorm("signup", signupSchema, {
-        onValidSubmit(event) {
+        customIssues: data?.errors,
+        async onValidSubmit(event) {            
             event.preventDefault();            
-            execute({
+            const { data } = await execute({
                 data: event.data,
             });
+
+            if(data.user){
+                toast(texts.submitSuccess);
+                router.push("/");
+            } else {
+                toast(texts.submitFailure);
+            }
 
         }
     });
 
-    const disabled = validation?.success === false;
+    const disabled = validation?.success === false || loading;
 
     return <Container>
-                <Title>Cadastre-se</Title>
+                <Title>{texts.title}</Title>
                 <SignupFormContent noValidate ref={ref}>
-                    <Input className={`input ${errors.name("error")}`} type="text"  id="name" placeholder="Nome" name={fields.name()}></Input>
+                    <Input className={`input ${errors.name("error")}`} type="text"  id="name" placeholder="Nome" name={fields.name()} disabled={loading}></Input>
                     {errors.name((error) => (<ErrorMessage message={error.message}/>))}
 
-                    <Input className={`input ${errors.email("error")}`} type="email"  id="email" placeholder="E-mail" name={fields.email()}></Input>                    
+                    <Input className={`input ${errors.email("error")}`} type="email"  id="email" placeholder="E-mail" name={fields.email()} disabled={loading}></Input>                    
                     {errors.email((error) => (<ErrorMessage message={error.message}/>))}
 
-                    <Input className={`input ${errors.password("error")}`} type="password" id="password" placeholder="Senha" name={fields.password()}></Input>
+                    <Input className={`input ${errors.password("error")}`} type="password" id="password" placeholder="Senha" name={fields.password()} disabled={loading}></Input>
                     {errors.password((error) => (<ErrorMessage message={error.message}/>))}
 
-                    <Input className={`input ${errors.password("error")}`} type="password" name={fields.confirmPassword()} id="password" placeholder="Confirmar Senha"></Input>
+                    <Input className={`input ${errors.password("error")}`} type="password" name={fields.confirmPassword()} id="confirmPassword" placeholder="Confirmar Senha" disabled={loading}></Input>
                     {errors.confirmPassword((error) => (<ErrorMessage message={error.message}/>))}
 
-                    <Button disabled={disabled} type="submit">Criar Conta</Button>
+                    <Button disabled={disabled} type="submit"> {loading ? <LoadingIndicator /> : texts.submit}</Button>
                 </SignupFormContent>
                 
            </Container>
